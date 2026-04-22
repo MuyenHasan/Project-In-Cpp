@@ -1,7 +1,14 @@
 #include <iostream>
 #include <fstream>
-#include <cstdio>   // for remove & rename
+#include <iomanip>
+#include <cstdio>
+#include <windows.h>
 using namespace std;
+
+
+void setColor(int color) {
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
 
 // Add Book
 void addBook() {
@@ -18,7 +25,9 @@ void addBook() {
     file << id << "*" << name << "*" << author << "*Available\n";
     file.close();
 
+    setColor(10);
     cout << "Book Added Successfully!\n";
+    setColor(7);
 }
 
 // Show All Books
@@ -26,15 +35,34 @@ void showAll() {
     string id, name, author, status;
     ifstream file("bookData.txt");
 
-    cout << "\nID\tName\tAuthor\tStatus\n";
-    cout << "----------------------------------------\n";
+    setColor(11);
+    cout << "\n================= LIBRARY BOOK LIST =================\n";
+
+    setColor(14);
+    cout << left << setw(10) << "ID"
+         << setw(25) << "Name"
+         << setw(20) << "Author"
+         << setw(12) << "Status" << endl;
+
+    setColor(7);
+    cout << "--------------------------------------------------------------\n";
 
     while (getline(file, id, '*') &&
            getline(file, name, '*') &&
            getline(file, author, '*') &&
            getline(file, status)) {
 
-        cout << id << "\t" << name << "\t" << author << "\t" << status << endl;
+        if (status == "Available")
+            setColor(10); // Green
+        else
+            setColor(12); // Red
+
+        cout << left << setw(10) << id
+             << setw(25) << name
+             << setw(20) << author
+             << setw(12) << status << endl;
+
+        setColor(7);
     }
 
     file.close();
@@ -56,18 +84,26 @@ void searchBook() {
            getline(file, status)) {
 
         if (id == search) {
+            setColor(11);
             cout << "\nBook Found:\n";
+
+            setColor(14);
             cout << "ID: " << id << endl;
             cout << "Name: " << name << endl;
             cout << "Author: " << author << endl;
             cout << "Status: " << status << endl;
+
+            setColor(7);
             found = true;
             break;
         }
     }
 
-    if (!found)
+    if (!found) {
+        setColor(12);
         cout << "Book not found!\n";
+        setColor(7);
+    }
 
     file.close();
 }
@@ -92,10 +128,13 @@ void issueBook() {
             found = true;
             if (status == "Available") {
                 status = "Issued";
+                setColor(10);
                 cout << "Book Issued Successfully!\n";
             } else {
+                setColor(12);
                 cout << "Book already issued!\n";
             }
+            setColor(7);
         }
 
         temp << id << "*" << name << "*" << author << "*" << status << endl;
@@ -107,8 +146,11 @@ void issueBook() {
     remove("bookData.txt");
     rename("temp.txt", "bookData.txt");
 
-    if (!found)
+    if (!found) {
+        setColor(12);
         cout << "Book not found!\n";
+        setColor(7);
+    }
 }
 
 // Return Book
@@ -131,10 +173,13 @@ void returnBook() {
             found = true;
             if (status == "Issued") {
                 status = "Available";
+                setColor(10);
                 cout << "Book Returned Successfully!\n";
             } else {
+                setColor(12);
                 cout << "Book was not issued!\n";
             }
+            setColor(7);
         }
 
         temp << id << "*" << name << "*" << author << "*" << status << endl;
@@ -146,8 +191,11 @@ void returnBook() {
     remove("bookData.txt");
     rename("temp.txt", "bookData.txt");
 
-    if (!found)
+    if (!found) {
+        setColor(12);
         cout << "Book not found!\n";
+        setColor(7);
+    }
 }
 
 // Main Menu
@@ -155,13 +203,18 @@ int main() {
     char choice;
 
     do {
-        cout << "\n====== Library Menu ======\n";
+        setColor(11);
+        cout << "\n====== LIBRARY MENU ======\n";
+
+        setColor(14);
         cout << "1. Show All Books\n";
         cout << "2. Search Book\n";
         cout << "3. Add Book\n";
         cout << "4. Issue Book\n";
         cout << "5. Return Book\n";
         cout << "6. Exit\n";
+
+        setColor(7);
         cout << "Enter choice: ";
 
         cin >> choice;
