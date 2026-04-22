@@ -40,6 +40,7 @@ void showAll() {
     file.close();
 }
 
+// Search Book
 void searchBook() {
     string search, id, name, author, status;
     bool found = false;
@@ -69,4 +70,114 @@ void searchBook() {
         cout << "Book not found!\n";
 
     file.close();
+}
+
+// Issue Book
+void issueBook() {
+    string search, id, name, author, status;
+    bool found = false;
+
+    cout << "Enter Book ID to Issue: ";
+    getline(cin, search);
+
+    ifstream file("bookData.txt");
+    ofstream temp("temp.txt");
+
+    while (getline(file, id, '*') &&
+           getline(file, name, '*') &&
+           getline(file, author, '*') &&
+           getline(file, status)) {
+
+        if (id == search) {
+            found = true;
+            if (status == "Available") {
+                status = "Issued";
+                cout << "Book Issued Successfully!\n";
+            } else {
+                cout << "Book already issued!\n";
+            }
+        }
+
+        temp << id << "*" << name << "*" << author << "*" << status << endl;
+    }
+
+    file.close();
+    temp.close();
+
+    remove("bookData.txt");
+    rename("temp.txt", "bookData.txt");
+
+    if (!found)
+        cout << "Book not found!\n";
+}
+
+// Return Book
+void returnBook() {
+    string search, id, name, author, status;
+    bool found = false;
+
+    cout << "Enter Book ID to Return: ";
+    getline(cin, search);
+
+    ifstream file("bookData.txt");
+    ofstream temp("temp.txt");
+
+    while (getline(file, id, '*') &&
+           getline(file, name, '*') &&
+           getline(file, author, '*') &&
+           getline(file, status)) {
+
+        if (id == search) {
+            found = true;
+            if (status == "Issued") {
+                status = "Available";
+                cout << "Book Returned Successfully!\n";
+            } else {
+                cout << "Book was not issued!\n";
+            }
+        }
+
+        temp << id << "*" << name << "*" << author << "*" << status << endl;
+    }
+
+    file.close();
+    temp.close();
+
+    remove("bookData.txt");
+    rename("temp.txt", "bookData.txt");
+
+    if (!found)
+        cout << "Book not found!\n";
+}
+
+// Main Menu
+int main() {
+    char choice;
+
+    do {
+        cout << "\n====== Library Menu ======\n";
+        cout << "1. Show All Books\n";
+        cout << "2. Search Book\n";
+        cout << "3. Add Book\n";
+        cout << "4. Issue Book\n";
+        cout << "5. Return Book\n";
+        cout << "6. Exit\n";
+        cout << "Enter choice: ";
+
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case '1': showAll(); break;
+            case '2': searchBook(); break;
+            case '3': addBook(); break;
+            case '4': issueBook(); break;
+            case '5': returnBook(); break;
+            case '6': cout << "Goodbye!\n"; break;
+            default: cout << "Invalid choice!\n";
+        }
+
+    } while (choice != '6');
+
+    return 0;
 }
